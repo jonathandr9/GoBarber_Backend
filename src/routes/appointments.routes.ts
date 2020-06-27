@@ -1,37 +1,40 @@
 import {Router, response} from 'express';
 import {startOfHour, parseISO} from 'date-fns';
+import {getCustomRepository} from 'typeorm';
 
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 import CreateAppointmentService from '../services/CreateAppointmentService'
 
 
 const appointmentsRouter = Router();
-const appointmentsRepository = new AppointmentsRepository();
+
 
 //SoC: Separation of Concerns (Separação de preocupações)
 //Rota deve apenas receber a requisição, chamar outro arquivo e devolver uma resposta
 
 
-appointmentsRouter.get('/', (request, response) => {
+appointmentsRouter.get('/', async (request, response) => {
 
-    const appointments = appointmentsRepository.all();
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+
+    const appointments = await appointmentsRepository.find();
 
     return response.json(appointments);
 });
 
 
-appointmentsRouter.post('/', (request, response) =>{
+appointmentsRouter.post('/', async (request, response) =>{
 
     try{
-        
+
 
         const {provider, date} = request.body;//recebe os dados da requisição
 
         const parsedDate = parseISO(date);// transforma os dados da requisição(é transformação de dados e não regra de negócio)
-    
-        const createAppointment = new CreateAppointmentService(appointmentsRepository); //instancia o service com a inversão de dependencia
 
-        const appointment = createAppointment.execute({provider, date: parsedDate}); //executa o service
+        const appointmentsRepository = new CreateAppointmentService();
+
+        const appointment = await appointmentsRepository.execute({provider, date: parsedDate}); //executa o service
 
         return response.json(appointment); //retorna a resposta
 
