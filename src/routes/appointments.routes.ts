@@ -28,13 +28,13 @@ appointmentsRouter.post('/', async (request, response) =>{
     try{
 
 
-        const {provider, date} = request.body;//recebe os dados da requisição
+        const {provider_id, date} = request.body;//recebe os dados da requisição
 
         const parsedDate = parseISO(date);// transforma os dados da requisição(é transformação de dados e não regra de negócio)
 
         const appointmentsRepository = new CreateAppointmentService();
 
-        const appointment = await appointmentsRepository.execute({provider, date: parsedDate}); //executa o service
+        const appointment = await appointmentsRepository.execute({provider_id, date: parsedDate}); //executa o service
 
         return response.json(appointment); //retorna a resposta
 
