@@ -4,10 +4,11 @@ import {getCustomRepository} from 'typeorm';
 
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 import CreateAppointmentService from '../services/CreateAppointmentService'
-
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 
 const appointmentsRouter = Router();
 
+appointmentsRouter.use(ensureAuthenticated);
 
 //SoC: Separation of Concerns (Separação de preocupações)
 //Rota deve apenas receber a requisição, chamar outro arquivo e devolver uma resposta
